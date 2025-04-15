@@ -1,0 +1,115 @@
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+
+export default function ShotListApp() {
+  const [shots, setShots] = useState([]);
+  const [form, setForm] = useState({
+    number: "",
+    type: "",
+    description: "",
+    movement: "",
+    location: "",
+  });
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const addShot = () => {
+    if (!form.number || !form.type) return;
+    setShots([...shots, form]);
+    setForm({ number: "", type: "", description: "", movement: "", location: "" });
+  };
+
+  const removeShot = (index) => {
+    const updated = [...shots];
+    updated.splice(index, 1);
+    setShots(updated);
+  };
+
+  return (
+    <div className="p-6 max-w-4xl mx-auto space-y-6">
+      <h1 className="text-3xl font-bold">🎬 Shot List Creator</h1>
+
+      <Card>
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+          <Input
+            name="number"
+            value={form.number}
+            onChange={handleChange}
+            placeholder="Shot Number"
+          />
+          <Input
+            name="type"
+            value={form.type}
+            onChange={handleChange}
+            placeholder="Shot Type (e.g. CU, WS)"
+          />
+          <Input
+            name="movement"
+            value={form.movement}
+            onChange={handleChange}
+            placeholder="Camera Movement"
+          />
+          <Input
+            name="location"
+            value={form.location}
+            onChange={handleChange}
+            placeholder="Location"
+          />
+          <Textarea
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            placeholder="Shot Description"
+            className="col-span-full"
+          />
+          <Button onClick={addShot} className="col-span-full w-full">
+            ➕ Add Shot
+          </Button>
+        </CardContent>
+      </Card>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm border">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="p-2 border">#</th>
+              <th className="p-2 border">Type</th>
+              <th className="p-2 border">Description</th>
+              <th className="p-2 border">Movement</th>
+              <th className="p-2 border">Location</th>
+              <th className="p-2 border">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {shots.map((shot, i) => (
+              <tr key={i} className="even:bg-gray-50">
+                <td className="p-2 border">{shot.number}</td>
+                <td className="p-2 border">{shot.type}</td>
+                <td className="p-2 border">{shot.description}</td>
+                <td className="p-2 border">{shot.movement}</td>
+                <td className="p-2 border">{shot.location}</td>
+                <td className="p-2 border text-center">
+                  <Button variant="destructive" size="sm" onClick={() => removeShot(i)}>
+                    Delete
+                  </Button>
+                </td>
+              </tr>
+            ))}
+            {shots.length === 0 && (
+              <tr>
+                <td colSpan={6} className="text-center p-4 text-gray-500">
+                  No shots added yet.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
